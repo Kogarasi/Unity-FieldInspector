@@ -39,6 +39,7 @@ namespace FieldInspector.Editor {
             } else {
                 EditorGUILayout.Space();
 
+                // Display GameObject.
                 foreach( var go in selected ){
                     DisplayGameObject( go );
 
@@ -61,6 +62,7 @@ namespace FieldInspector.Editor {
 
             EditorGUI.indentLevel++;
 
+            // Display Component.
             var components = go.GetComponents( monoType );
             if( components.Length == 0 ){
                 EditorGUILayout.LabelField( "This gameobject has not Monobehaviour component!" );
@@ -79,8 +81,14 @@ namespace FieldInspector.Editor {
         //!
         void DisplayComponent( Component monoComponent ){
             EditorGUILayout.LabelField( monoComponent.GetType().FullName + " - Component" );
+            EditorGUI.indentLevel++;
 
-            analyzer.AnalyzeComponent( monoComponent );
+            var componentInfo = analyzer.GetComponentInfo( monoComponent );
+            componentInfo.fieldMetadata.ToList().ForEach( pair => {
+                EditorGUILayout.LabelField( pair.Key + "::" + pair.Value.FieldType.Name );
+            });
+
+            EditorGUI.indentLevel--;
         }
 
         //!

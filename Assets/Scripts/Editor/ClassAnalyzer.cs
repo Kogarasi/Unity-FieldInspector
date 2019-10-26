@@ -5,7 +5,8 @@
 //!
 
 using System;
-using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FieldInspector.Editor {
@@ -14,21 +15,30 @@ namespace FieldInspector.Editor {
     //! @brief Analyze GameObject/Monobehaviour class.
     //!
     public class ClassAnalyzer {
-        private MetadataCache cache = new MetadataCache();
+
+        // for type metadata caching.
+        private ComponentTypeCache typeCache = new ComponentTypeCache();
+
+        private Dictionary<Type, Entity.ComponentInfo> componentInfos = new Dictionary<Type, Entity.ComponentInfo>();
 
         //!
-        //! @brief Analyze Monobehaviour class.
-        //! @param[in] component Monobehaviour component.
+        //! @brief Get Monobehaviour Component Information.
         //!
-        public void AnalyzeComponent( Component component ){
-            var type = cache.GetComponentType( component );
+        public Entity.ComponentInfo GetComponentInfo( Component component ){
+            var type = typeCache.GetComponentType( component );
+
+            if( !componentInfos.ContainsKey( type ) ){
+                componentInfos[ type ] = new Entity.ComponentInfo( type );
+            }
+
+            return componentInfos[ type ];
         }
 
         //!
         //! @brief Clear analyzed data.
         //!
         public void Clear(){
-            cache.Clear();
+            typeCache.Clear();
         }
     }
 }
